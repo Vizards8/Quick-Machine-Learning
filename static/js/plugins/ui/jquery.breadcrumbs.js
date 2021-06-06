@@ -1,8 +1,8 @@
 /*
 	xBreadcrumbs (Extended Breadcrums) jQuery Plugin
-	© 2009 ajaxBlender.com
+	ï¿½ 2009 ajaxBlender.com
 	For any questions please visit www.ajaxblender.com 
-	or email us at support@ajaxblender.com
+	or EMAIL us at support@ajaxblender.com
 */
 
 ;(function($){

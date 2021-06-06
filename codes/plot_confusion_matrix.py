@@ -1,3 +1,4 @@
+
 def plot_confusion_matrix(model_name,cm, classes, normalize=False,title='Confusion matrix', cmap=plt.cm.Blues):
     import itertools
     plt.figure()
@@ -18,8 +19,10 @@ def plot_confusion_matrix(model_name,cm, classes, normalize=False,title='Confusi
     plt.tight_layout()
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
-    if os.path.isfile('./static/modelresult/' + model_name + '_confusion.png'):
-        os.remove('./static/modelresult/'+model_name+'_confusion.png')
-    plt.savefig('./static/modelresult/'+model_name+'_confusion.png') #此处可以回传
+    img_path = './static/modelresult/' + model_name + '_confusion.png'
+    if os.path.isfile(img_path):
+        os.remove(img_path)
+    plt.savefig(img_path) #此处可以回传
     plt.close()
+    return img_path
     # plt.show()

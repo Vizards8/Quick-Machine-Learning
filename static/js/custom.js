@@ -163,7 +163,7 @@ $(function() {
 			},
 			messages: {
 				bazinga: "Bazinga. This note is editable",
-				email: { required: "Please specify your email", email: "Correct format is name@domain.com" }
+				email: { required: "Please specify your EMAIL", email: "Correct format is name@domain.com" }
 			}
 		}
 	});

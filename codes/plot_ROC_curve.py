@@ -1,3 +1,4 @@
+
 def plot_ROC_curve(model_name, y_test, y_predict):
     false_positive_rate, true_positive_rate, thresholds = roc_curve(y_test, y_predict)
     roc_auc = auc(false_positive_rate, true_positive_rate)
@@ -7,8 +8,10 @@ def plot_ROC_curve(model_name, y_test, y_predict):
     plt.plot([0, 1], [0, 1], 'r--')
     plt.ylabel('TPR')
     plt.xlabel('FPR')
-    if os.path.isfile('./static/modelresult/' + model_name + '_ROC.png'):
-        os.remove('./static/modelresult/' + model_name + '_ROC.png')
-    plt.savefig('./static/modelresult/' + model_name + '_ROC.png')  # 此处可以回传
+    img_path = './static/modelresult/' + model_name + '_ROC.png'
+    if os.path.isfile(img_path):
+        os.remove(img_path)
+    plt.savefig(img_path)  # 此处可以回传
     plt.close()
+    return img_path
     # plt.show()

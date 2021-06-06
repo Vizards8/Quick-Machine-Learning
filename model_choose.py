@@ -1,182 +1,322 @@
-import os, json
+import time
+import os
+import json
+import shutil
+from copy import deepcopy
+from flask import Flask, request, render_template, make_response, Response, redirect, url_for, jsonify
+from flask_cors import CORS
+from flask_sqlalchemy import SQLAlchemy
 
-'''
-流程： 
-1、从monodb读取用户上传的数据集
-2、传入需要处理的列(特征列)，以及处理过程函数。 
-   内置填充缺失值、删除缺失值以及one-hot编码
-   标准化数据（MinMax），可选参数
-3、模型构建，传入模型名称、目标列进行构建
-   允许用户进行参数搜索，前端用户输入的搜索参数格式为json格式
+from dicts_and_set import *
+from icecream import ic
 
-主函数生成：
-- 自动生成代码的代码模块存放于同一个文件夹：
-   仅包含功能函数
-- 主函数预先定义一个代码文件，相关参数通过占位符填充，填充的参数来源于前段输入，包括：主要包括特征列、目标列，文件名
-'''
+"""Flask"""
+app = Flask(__name__, template_folder='templates', static_folder='static')
+# filename = []
 
-'''查看模型中文名用'''
-'''
-MODEL_DICT = {
-    '分类': {
-        '朴素贝叶斯': 'from sklearn.naive_bayes import GaussianNB',
-        '决策树': 'from sklearn.tree import DecisionTreeClassifier',
-        '支持向量机': 'from sklearn.svm import SVC',
-        '神经网络': 'from sklearn.neural_network import MLPClassifier'
-    },
-    '回归': {
-        '线性回归': 'from sklearn.linear_model import LinearRegression',
-        '逻辑回归': 'from sklearn.linear_model import LogisticRegression',
-        '决策树': 'from sklearn.tree import DecisionTreeRegressor',
-        '支持向量机': 'from sklearn.svm import SVR',
-        '神经网络': 'from sklearn.neural_network import MLPRegressor'
-    },
-    '聚类': {
-        'K-means': 'from sklearn.cluster import KMeans'
-    },
-    'ROC曲线': 'plot_ROC_curve.py',
-    '混淆矩阵': 'plot_confusion_matrix.py'
-}
-'''
+# 设置连接的数据库uri
+app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://quickml:quickml@localhost:3306/quick_ml"
+# 设置每次请求结束后，会自动提交数据库的改动
+app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# 查询时显示原始sql语句
+app.config['SQLALCHEMY_ECHO'] = False
+db = SQLAlchemy(app)
 
-MODEL_DICT_name = {
-    '1': {
-        '101': 'GaussianNB',
-        '102': 'DecisionTreeClassifier',
-        '103': 'SVM',
-        '104': 'MLPClassifier'
-    },
-    '2': {
-        '201': 'LinearRegression',
-        '202': 'LogisticRegression',
-        '203': 'DecisionTreeRegressor',
-        '204': 'SVM',
-        '205': 'MLPRegressor'
-    },
-    '3': {
-        '301': 'K-Means'
-    },
-    '401': 'plot_ROC_curve.py',
-    '402': 'plot_confusion_matrix.py'
-}
+CORS(app)
 
-MODEL_DICT = {
-    '1': {
-        '101': 'from sklearn.naive_bayes import GaussianNB',
-        '102': 'from sklearn.tree import DecisionTreeClassifier',
-        '103': 'from sklearn.svm import SVC',
-        '104': 'from sklearn.neural_network import MLPClassifier'
-    },
-    '2': {
-        '201': 'from sklearn.linear_model import LinearRegression',
-        '202': 'from sklearn.linear_model import LogisticRegression',
-        '203': 'from sklearn.tree import DecisionTreeRegressor',
-        '204': 'from sklearn.svm import SVR',
-        '205': 'from sklearn.neural_network import MLPRegressor'
-    },
-    '3': {
-        '301': 'from sklearn.cluster import KMeans'
-    },
-    '401': 'plot_ROC_curve.py',
-    '402': 'plot_confusion_matrix.py'
-}
+"""Database"""
 
 
-class SetModel():
-    '''
+# 数据库存储各种训练模型表：modules
+class Modules(db.Model):
+    # 定义表名
+    __tablename__ = 'modules'
+    MODULEID = db.Column(db.Integer, primary_key=True)  # 101
+    TYPE = db.Column(db.Integer, unique=False)  # 1
+    TYPENAME = db.Column(db.String(32), unique=False)  # 分类
+    NAME = db.Column(db.String(64), unique=False)  # GaussianNB
+    IMPORTING = db.Column(db.String(128), unique=False)  # from…………import…………
 
-    用于与前端界面交互，获取特征列，以及数据处理步骤。
-    根据用户选择的步骤，读取预定义的代码。
-    前端返回参数
-    {
-        target:[],
-        features:[],
-
-    }
-    '''
-
-    def __init__(self, dataset_name, target, features, model_type, model_name, evaluate_methods):
-        '''
-        参数与前端的用户输入一致
-        '''
-        self.code_files = './codes/'
-        self.dataset_name = dataset_name
-        self.target = target
-        self.features = features.split(';')
-        self.model_type = model_type
-        self.model_name = model_name
-        self.generate = ''
-        self.evaluate_methods = evaluate_methods
-
-    def clean_data(self, df, cols, op, standard=''):
-        '''
-           自动数据清洗
-           df:
-           cols:
-           op:数据清洗的操作
-           '''
-        if op == 'fillna':
-            df.loc[:, cols].fillna()
-        elif op == 'dropna':
-            df.loc[:, cols].dropna()
-        else:
-            df.loc[:, cols].apply(op)
-        return df
-
-    def joint_code(self, code_path, encoding='utf-8'):
-        '''拼接代码文件'''
-        try:
-            f = open(os.path.join(self.code_files, code_path), 'r', encoding=encoding)
-            self.generate += f.read() + '\n'
-        except:
-            f = open(os.path.join(self.code_files, code_path), 'r', encoding='gbk')
-            self.generate += f.read() + '\n'
-
-    def get_code(self):
-        '''生成代码'''
-        # 拼接导入的库
-        self.joint_code('ImportPackages.py')
-        self.generate += '\n' + MODEL_DICT[self.model_type][self.model_name] + '\n'
-
-        # 拼接函数评估方法
-        for method in self.evaluate_methods:
-            self.joint_code(MODEL_DICT[method])
-
-        # 拼接变量
-        sklearn_model = MODEL_DICT[self.model_type][self.model_name].split(' ')[-1] + '()'
-        self.generate += '''
-FILE_PATH={}\n
-FILE_PATH = np.unique(FILE_PATH)\n
-FEATURES={}\n
-TARGET='{}'\n
-MODEL={}\n
-model_name=str(MODEL)[0:-2]\n
-        '''.format(self.dataset_name, self.features, self.target, sklearn_model)
-        # 拼接主函数
-        self.joint_code('Main.py')
-
-        # 生成代码文件
-        with open('generate.py', 'w', encoding='utf-8') as f:
-            f.write(self.generate)
-        f.close()
+    def __repr__(self):
+        return '<module: %s\t%s\t%s\t%s\t%s>' % (self.TYPE, self.TYPENAME, self.MODULEID, self.NAME, self.IMPORTING)
 
 
-'''Flask'''
-from flask import Flask, request, render_template, redirect, url_for
+# 数据库账户表：accounts
+class Accounts(db.Model):
+    __tablename__ = 'accounts'
+    USERNAME = db.Column(db.String(32), primary_key=True)  # 用户名，作为主键，不可重复
+    PASSWORD = db.Column(db.String(32), unique=False)  # 用户密码
+    EMAIL = db.Column(db.String(128), unique=False)  # 用户邮箱
 
-app = Flask(__name__)
-filename = []
+    def __repr__(self):
+        return '<account: %s\t%s\t%s>' % (self.USERNAME, self.PASSWORD, self.EMAIL)
+
+
+# 数据库训练项目表：trains
+class Trains(db.Model):
+    __tablename__ = 'trains'
+    TRAINID = db.Column(db.Integer, primary_key=True)  # 唯一的训练ID（应注意用户和开始训练的时间相结合产生的唯一性）
+    USERNAME = db.Column(db.String(32), db.ForeignKey(Accounts.USERNAME), unique=False)  # 提交此训练的用户
+    TRAINFILES = db.Column(db.String(256), unique=False)  # 保存训练上传的文件所在地址，文件之间用‘;’隔开
+    USEPCA = db.Column(db.Boolean, unique=True)  # 是否降维
+    STARTTIME = db.Column(db.DateTime, unique=False)  # 开始训练时间（点击按钮）
+    TRAINFINISHED = db.Column(db.Boolean, unique=False, default=False)  # 是否已经完成训练，默认未完成
+
+    def __repr__(self):
+        return '<train: %s\t%s\t%s\t%s>' % (self.TRAINID, self.USERNAME, self.STARTTIME, self.TRAINFINISHED)
+
+
+# 数据库具体结果表：results
+class Results(db.Model):
+    __tablename__ = 'results'
+    SPECIFICID = db.Column(db.Integer, primary_key=True)  # 具体训练结果的ID
+    TRAINID = db.Column(db.Integer, db.ForeignKey(Trains.TRAINID), unique=False)  # 对应外键trainID，用于查找此训练的所有结果
+    MODULEID = db.Column(db.Integer, db.ForeignKey(Modules.MODULEID), unique=False)  # 对应外键moduleID
+    # modulename = db.Column(db.String(64), unique=False)  # module名
+    # RUNNINGTIME = db.Column(db.Float(precision="6,6"), unique=False)  # 运行时间，需要确认是否能正确显示
+    # ACCURACY = db.Column(db.Float(precision="6,3"), unique=False)  # 正确率，输出需要在后面加%
+    RUNNINGTIME = db.Column(db.String(8), unique=False)  # 运行时间，需要确认是否能正确显示
+    ACCURACY = db.Column(db.String(8), unique=False)  # 正确率，输出需要在后面加%
+    IMGPATH_CONFUSION = db.Column(db.String(64), unique=False)  # 混淆矩阵图片存放位置
+    FINISHED = db.Column(db.Boolean, default=False)  # 具体训练是否完成
+
+    def __repr__(self):
+        return '<result: %s\t%s\t%s\t%s\t%s\t%s\t%s>' % \
+               (self.SPECIFICID, self.TRAINID, self.MODULEID, self.RUNNINGTIME,
+                self.ACCURACY, self.IMGPATH_CONFUSION, self.FINISHED)
+
+
+# 初始化数据库表
+def init_db():
+    db.session.commit()
+    db.session.remove()
+    db.drop_all()  # 删除所有表
+    db.create_all()  # 创建所有表
+
+    modules = []
+    for Mk, Mvs in MODEL_DICT.items():
+        for k, v in Mvs.items():
+            m = Modules(MODULEID=k, TYPE=Mk, TYPENAME=Typename[int(Mk) - 1], NAME=v.split(' ')[-1], IMPORTING=v)
+            modules.append(m)
+    db.session.add_all(modules)
+
+    a = Accounts(USERNAME='superadmin', PASSWORD='666', EMAIL='666@jnu.com')
+    b = Accounts(USERNAME='ZhangSan', PASSWORD='666', EMAIL='666@jnu.com')
+
+    db.session.add(a)
+    db.session.add(b)
+
+    db.session.commit()
+
+
+init_db()
 
 
 @app.route('/')
 def index():
-    # return 'This is index!'
-    return render_template('index.html')
+    return render_template('login.html')
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'GET':
+        pass
+    else:
+        username = request.form.get('username')
+        password = request.form.get('password')
+        a = Accounts.query.filter_by(USERNAME=username).all()
+
+        if a[0].PASSWORD != password:
+            print('密码错误')
+            coo = Response()
+            coo.set_cookie('status', '0')
+            # res = json.dumps({'status': 0, 'msg': '密码错误'})
+            return coo
+        elif a[0].PASSWORD == password:
+            print(username, "登录成功")
+        else:
+            a = Accounts(USERNAME=username, PASSWORD=password)
+            print("创建用户成功：", username)
+            db.session.add(a)
+            db.session.commit()
+
+        # coo = make_response("success")
+        coo = Response()
+        coo.set_cookie('status', '1')
+        coo.set_cookie("user", str(username))
+        coo.set_cookie("trainid", '0')
+        ic(coo)
+        return coo
 
 
 @app.route('/<name>')
 def user(name):
-    return render_template(name)
+    if name == 'model_select.html':
+        Ms = Modules.query.all()
+        ic(Ms)
+        return render_template(name, Ms=Ms)
+    else:
+        return render_template(name)
+
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload():
+    if request.method == 'GET':
+        pass
+    else:
+        username = request.cookies.get('user')
+        trainid = int(request.cookies.get('trainid'))  # 默认值为0
+        # starttime = request.cookies.get('starttime')
+        ic(username, trainid)
+
+        file = request.files.get('file')
+
+        # 数据库训练项目表操作
+        if trainid == 0:
+            t = Trains.query.order_by(Trains.TRAINID.desc()).first()
+            ic(t)
+            if t is None:
+                trainid = 1
+            else:
+                trainid = t.TRAINID + 1
+
+            file_dir = os.path.join('./Datasets/', str(trainid))
+            if not os.path.exists(file_dir):
+                os.mkdir(file_dir)
+
+            filepath = os.path.join('./Datasets/' + str(trainid) + '/', file.filename)
+            file.save(filepath)
+            t = Trains(TRAINID=trainid, USERNAME=username, TRAINFILES=filepath)
+            ic('新建train', t)
+            db.session.add(t)
+            db.session.commit()
+
+            coo = Response()
+            coo.set_cookie('trainid', str(trainid))
+            return coo
+
+        else:
+            filepath = os.path.join('./Datasets/' + str(trainid) + '/', file.filename)
+            file.save(filepath)
+            t = Trains.query.filter_by(USERNAME=username, TRAINID=trainid).all()[0]
+            f = deepcopy(t.TRAINFILES).split(';')
+            if filepath not in f:
+                t.TRAINFILES += (';' + filepath)
+                ic('后续文件', t)
+            else:
+                ic('文件重复上传')
+            db.session.commit()
+            return 'Upload ' + file.filename + ' Done'
+
+
+@app.route('/runmodel', methods=['GET', 'POST'])
+def test():
+    if request.method == 'GET':
+        pass
+    else:
+        rs = []  # result表待加入的数据
+
+        trainid = int(request.cookies.get('trainid'))
+        models_arg1 = request.get_data()
+        models_arg = str(models_arg1)[2:-1].split('&')[:-1]
+        # pca = request.form.get("pca")
+        # pca = True if pca.lower() == 'true' else False
+        # ic(models_arg1, models_arg, pca)
+
+        result_path = './static/modelresult/' + str(trainid)
+        if os.path.exists(result_path):
+            shutil.rmtree(result_path)
+        os.mkdir(result_path)
+
+        for models in models_arg:
+            moduleid = int(models.split('=')[-1])
+
+            if moduleid is None:
+                return 'Please choose a model!'
+
+            specificid = moduleid + trainid * 10 ** len(str(moduleid))
+            r = Results(SPECIFICID=specificid, TRAINID=trainid, MODULEID=moduleid)
+            rs.append(r)
+        ic(rs)
+        db.session.add_all(rs)
+        db.session.commit()
+
+        # 查询与修改trainid条目
+        t = Trains.query.filter_by(TRAINID=trainid)[0]
+        # t.USEPCA = pca
+        trainfiles = t.TRAINFILES.split(';')
+        if trainfiles is None:
+            return 'Please upload a file first!'
+
+
+        for r in rs:
+            module = Modules.query.filter_by(MODULEID=r.MODULEID)[0]
+            type = module.TYPE
+            name = module.MODULEID
+            # ic(trainid, r.SPECIFICID, trainfiles, 'target', 'features', type, name, result_path)
+            myModel = SetModel(trainid, r.SPECIFICID, trainfiles, 'target', 'features', type, name, result_path)
+            myModel.get_code()
+            os.system('python generate.py')
+            with open('./static/modelresult/'+str(trainid)+'/result.txt', 'r') as f:
+                _train_result = f.read().split('*')
+            r.RUNNINGTIME, r.ACCURACY, r.IMGPATH_CONFUSION, F = _train_result
+            r.FINISHED = True if F == "True" else False
+            ic(r)
+            db.session.commit()
+        ic(rs)
+
+        # 所有具体训练完成，修改训练项目表的finished
+        t = Trains.query.filter_by(TRAINID=trainid).all()
+        if len(t) != 1:
+            print("trainid is not unique, please check the database")
+        t[0].TRAINFINISHED = True
+
+        db.session.commit()
+        return 'Congratulations Model Done'
+        # return
+
+
+@app.route('/getSelectedModels', methods=['GET'])
+def getSelectedModels():
+    trainid = int(request.cookies.get('trainid'))
+    rs = Results.query.filter_by(TRAINID=trainid).all()
+    sel_models = []
+    for r in rs:
+        sel_model = Modules.query.filter(Modules.MODULEID == r.MODULEID)[0]
+        sel_model = sel_model.NAME
+        sel_models.append(sel_model)
+    data = {'Models': sel_models}
+    res = json.dumps(data)
+    ic(res)
+    return res
+
+
+@app.route('/getTrainedResult', methods=['GET'])
+def getTrainedResult():
+    trainid = int(request.cookies.get('trainid'))
+    t = Trains.query.filter_by(TRAINID=trainid).all()
+    assert len(t) == 1
+    t = t[0]
+
+    data = {'TrainedResult': [], 'Finished': t.TRAINFINISHED}
+    out = Results.query.filter(Results.TRAINID == t.TRAINID).all()
+    ic(out)
+    # assert len(rs) > 0
+    for R in out:
+        if R.FINISHED:
+            modulename = Modules.query.filter(Modules.MODULEID == R.MODULEID)[0].NAME
+            tem = [modulename, str(R.RUNNINGTIME) + 's', str(R.ACCURACY) + '%', R.IMGPATH_CONFUSION]
+            data['TrainedResult'].append(tem)
+    ic(data)
+
+    res = json.dumps(data)
+    if t.TRAINFINISHED:
+        coo = Response(res)
+        coo.delete_cookie('trainid', str(trainid))
+        coo.set_cookie('trainid', '0')
+        return coo
+    return res
 
 
 @app.errorhandler(403)
@@ -202,102 +342,6 @@ def page_not_found(e):
 @app.errorhandler(503)
 def page_not_found(e):
     return render_template("404.html"), 503
-
-
-@app.route('/upload', methods=['GET', 'POST'])
-def upload():
-    if request.method == 'GET':
-        return "upload GET Done"
-    else:
-        file = request.files.get('file')
-        filename.append(file.filename)
-        file.save(os.path.join('./Datasets/', filename[-1]))
-        return 'Upload ' + filename[-1] + ' Done'
-
-
-@app.route('/runmodel', methods=['GET', 'POST'])
-def runmodel():
-    if request.method == 'GET':
-        return "runmodel GET Done"
-    else:
-        models = []
-        models_arg = request.get_data()
-        models_arg = str(models_arg)[2:-1].split('&')
-        for i in models_arg:
-            if i.split('=')[1][-1] != '0':
-                models.append(i.split('=')[1])
-        # print(models)
-        evaluate = []
-        alltype = []
-        allname = []
-        for i in models:
-            if (i[0] > '0') & (i < '4'):
-                alltype.append(i[0])
-                allname.append(i)
-            else:
-                evaluate.append(i)
-
-        if filename == []:
-            return 'Please upload a file first!'
-        if alltype == [] or allname == []:
-            return 'Please choose a model!'
-        if evaluate == []:
-            return 'Please choose a evaluation method!'
-        print(filename, alltype, allname, evaluate)
-
-        f = open('./static/modelresult/sel_models.txt', 'w')
-        for type, name in zip(alltype, allname):
-            f.write(MODEL_DICT_name[type][name] + '*')
-        f.close()
-        if os.path.isfile('./static/modelresult/train_result.txt'):
-            os.remove('./static/modelresult/train_result.txt')
-        with open('./static/modelresult/train_result.txt', 'a+') as f:
-            f.close()
-
-        for type, name in zip(alltype, allname):
-            myModel = SetModel(filename, 'target', 'features', type, name, evaluate)
-            print(name, 'I am running...')
-            myModel.get_code()
-            os.system('python generate.py')
-            print(name, 'Done')
-
-        return 'Congratulations Model Done'
-
-
-@app.route('/getSelectedModels', methods=['GET'])
-def getSelectedModels():
-    with open('./static/modelresult/sel_models.txt', 'r') as f:
-        sel_models = f.read().split('*')[0:-1]
-    data = {'Models': sel_models}
-    res = json.dumps(data)
-    print(res)
-    return res
-
-
-@app.route('/getTrainedResult', methods=['GET'])
-def getTrainedResult():
-    if request.method == 'GET':
-        with open('./static/modelresult/sel_models.txt', 'r') as f:
-            sel_models = f.read().split('*')[0:-1]
-        print('number of models:', len(sel_models))
-        data = {'TrainedResult': [], 'Finished': False}
-        with open('./static/modelresult/train_result.txt', 'r') as f:
-            _train_result = f.read().split('*')
-        temp = []
-        for i in range(len(_train_result)):
-            if (i % 4 == 0) & (i != 0):
-                data['TrainedResult'].append(temp)
-                temp = []
-                temp.append(_train_result[i])
-            else:
-                temp.append(_train_result[i])
-        if i == len(sel_models) * 4:
-            data['Finished'] = True
-        res = json.dumps(data)
-        print(res)
-        return res
-    else:
-        return 'There is no need to POST!'
 
 
 if __name__ == '__main__':

@@ -1,0 +1,293 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+<title>QuickML|选择模型</title>
+<link href="static/css/main.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="static/js/jquery.min.js"></script>
+
+<script type="text/javascript" src="static/js/plugins/spinner/ui.spinner.js"></script>
+<script type="text/javascript" src="static/js/plugins/spinner/jquery.mousewheel.js"></script>
+
+<script type="text/javascript" src="static/js/jquery-ui.min.js"></script>
+
+<script type="text/javascript" src="static/js/plugins/charts/excanvas.min.js"></script>
+<script type="text/javascript" src="static/js/plugins/charts/jquery.sparkline.min.js"></script>
+
+<script type="text/javascript" src="static/js/plugins/forms/uniform.js"></script>
+<script type="text/javascript" src="static/js/plugins/forms/jquery.cleditor.js"></script>
+<script type="text/javascript" src="static/js/plugins/forms/jquery.validationEngine-en.js"></script>
+<script type="text/javascript" src="static/js/plugins/forms/jquery.validationEngine.js"></script>
+<script type="text/javascript" src="static/js/plugins/forms/jquery.tagsinput.min.js"></script>
+<script type="text/javascript" src="static/js/plugins/forms/autogrowtextarea.js"></script>
+<script type="text/javascript" src="static/js/plugins/forms/jquery.maskedinput.min.js"></script>
+<script type="text/javascript" src="static/js/plugins/forms/jquery.dualListBox.js"></script>
+<script type="text/javascript" src="static/js/plugins/forms/jquery.inputlimiter.min.js"></script>
+<script type="text/javascript" src="static/js/plugins/forms/chosen.jquery.min.js"></script>
+
+<script type="text/javascript" src="static/js/plugins/wizard/jquery.form.js"></script>
+<script type="text/javascript" src="static/js/plugins/wizard/jquery.validate.min.js"></script>
+<script type="text/javascript" src="static/js/plugins/wizard/jquery.form.wizard.js"></script>
+
+<script type="text/javascript" src="static/js/plugins/uploader/plupload.js"></script>
+<script type="text/javascript" src="static/js/plugins/uploader/plupload.html5.js"></script>
+<script type="text/javascript" src="static/js/plugins/uploader/plupload.html4.js"></script>
+<script type="text/javascript" src="static/js/plugins/uploader/jquery.plupload.queue.js"></script>
+
+<script type="text/javascript" src="static/js/plugins/tables/datatable.js"></script>
+<script type="text/javascript" src="static/js/plugins/tables/tablesort.min.js"></script>
+<script type="text/javascript" src="static/js/plugins/tables/resizable.min.js"></script>
+
+<script type="text/javascript" src="static/js/plugins/ui/jquery.tipsy.js"></script>
+<script type="text/javascript" src="static/js/plugins/ui/jquery.collapsible.min.js"></script>
+<script type="text/javascript" src="static/js/plugins/ui/jquery.prettyPhoto.js"></script>
+<script type="text/javascript" src="static/js/plugins/ui/jquery.progress.js"></script>
+<script type="text/javascript" src="static/js/plugins/ui/jquery.timeentry.min.js"></script>
+<script type="text/javascript" src="static/js/plugins/ui/jquery.colorpicker.js"></script>
+<script type="text/javascript" src="static/js/plugins/ui/jquery.jgrowl.js"></script>
+<script type="text/javascript" src="static/js/plugins/ui/jquery.breadcrumbs.js"></script>
+<script type="text/javascript" src="static/js/plugins/ui/jquery.sourcerer.js"></script>
+
+<script type="text/javascript" src="static/js/plugins/calendar.min.js"></script>
+<script type="text/javascript" src="static/js/plugins/elfinder.min.js"></script>
+
+<script type="text/javascript" src="static/js/custom.js"></script>
+
+<!-- Shared on MafiaShare.net  --><!-- Shared on MafiaShare.net  --></head>
+
+<body>
+
+<!-- Left side content -->
+<div id="leftSide">
+    <div class="logo"><a href="index.html"><img src="static/images/logo.png" alt="" /></a></div>
+    
+    <div class="sidebarSep mt0"></div>
+    
+    <!-- Search widget -->
+    <form action="" class="sidebarSearch">
+        <input type="text" name="search" placeholder="搜索..." id="ac" />
+        <input type="submit" value="" />
+    </form>
+    
+    <div class="sidebarSep"></div>
+
+    <!-- General balance widget -->
+    <div class="genBalance">
+        <a href="#" title="" class="amount">
+            <span>欢迎:</span>
+            <span class="balanceAmount">USER ID</span>
+        </a>
+        <a href="#" title="" class="amChanges">
+            <div><img src="./static/images/sunny.png"></div>
+        </a>
+    </div>
+   
+    
+    <div class="sidebarSep"></div>
+    
+    <!-- Left navigation -->
+    <ul id="menu" class="nav">
+        <li class="dash"><a href="index.html" title=""><span>个人中心</span></a></li>
+        <!--<li class="charts"><a href="charts.html" title=""><span>Statistics and charts</span></a></li>-->
+        <li class="forms"><a href="#" title=""><span>新建项目</span><strong>3</strong></a>
+            <ul class="sub">
+                <li><a href="upload_data.html" title="">上传数据</a></li>
+                <li><a href="model_select.html" title="">选择模型</a></li>
+                <li><a href="trained_result.html" title="">训练结果</a></li>
+            </ul>
+        </li>
+    </ul>
+</div>
+
+
+<!-- Right side -->
+<div id="rightSide">
+
+    <!-- Top fixed navigation -->
+    <div class="topNav">
+        <div class="wrapper">
+            <div class="userNav">
+                <ul>
+                    <li><a href="#" title=""><img src="static/images/icons/topnav/profile.png" alt="" /><span>账户</span></a></li>
+                    <li><a href="#" title=""><img src="static/images/icons/topnav/tasks.png" alt="" /><span>项目</span></a></li>
+                    <li><a href="#" title=""><img src="static/images/icons/topnav/settings.png" alt="" /><span>设置</span></a></li>
+                    <li><a href="#" title=""><img src="static/images/icons/topnav/logout.png" alt="" /><span>退出</span></a></li>
+                </ul>
+            </div>
+            <div class="clear"></div>
+        </div>
+    </div>
+    
+    <!-- Responsive header -->
+    <div class="resp">
+        <div class="respHead">
+            <a href="index.html" title=""><img src="static/images/loginLogo.png" alt="" /></a>
+        </div>
+        
+        <div class="cLine"></div>
+        <div class="smalldd">
+            <span class="goTo"><img src="static/images/icons/light/alert.png" alt="" /> 请调整窗口大小 </span>
+            <ul class="smallDropdown">
+                <li><a href="index.html" title=""><img src="static/images/icons/light/home.png" alt="" />首页</a></li>
+                <li><a href="upload_data.html" title=""><img src="static/images/icons/light/stats.png" alt="" />新建模型</a></li>
+            </ul>
+        </div>
+        <div class="cLine"></div>
+    </div>
+    
+    <!-- Title area -->
+    <div class="titleArea">
+        <div class="wrapper">
+            <div class="pageTitle">
+                <h1>选择模型</h1>
+                <span>这里选择使用的模型</span>
+            </div>
+            <div class="middleNav">
+                <div class="clear"></div>
+            </div>
+            <div class="clear"></div>
+        </div>
+    </div>
+    
+    <div class="line"></div>
+    
+    <!-- Main content wrapper -->
+    <div class="wrapper">
+    
+        <!-- Note -->
+        <div class="nNote nInformation">
+            <p><strong>提示: </strong>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</a></p>
+        </div>
+        
+        <!-- Form -->
+        <form class="form">
+            <!--选择已有数据-->
+            <fieldset>
+                <div class="widget">
+                    <div class="title"><img src="static/images/icons/dark/record.png" alt="" class="titleIcon" /><h6>选择您刚才上传的数据：</h6><div class="num"></div>
+                    <div class="formRow">
+                        <label>文件列表:</label>
+                            <div class="formRight">
+                                <ul class="uploadfiles">
+                                    <li><input type="checkbox" checked="checked" name="filename1" id="check1" class="checkfile" />
+                                        <label for="check1"><b>文件A</b></label>
+                                        <div style="clear: both;">
+                                            <ul>
+                                                <li><input type="checkbox" checked="checked" name="labelname1" id="check1" /><label for="check1">label1</label></li>
+                                                <li><input type="checkbox" checked="checked" name="labelname2" id="check1" /><label for="check1">label2</label></li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                    <div style="clear: both;">
+                                        <li><input type="checkbox" name="filename2" id="check2" class="checkfile"/><label for="check2"><b>文件B</b></label>
+                                            <div style="clear: both;">
+                                                <ul>
+                                                    <li><input type="checkbox" name="labelname1" id="check1" /><label for="check1">label2</label></li>
+                                                    <li><input type="checkbox" name="labelname2" id="check1" /><label for="check1">label2</label></li>
+                                                </ul>
+                                            </div>
+                                    </li>
+                                    </div>
+                                    <!--<input type="checkbox" name="check3" disabled="disabled" checked="checked" id="check3" /><label for="check3" class="disabled">Disabled checked</label>
+                                    <input type="checkbox" name="check4" disabled="disabled" id="check4" class="disabled" /><label for="check4" class="disabled">Disabled unchecked</label>-->
+                                </ul>
+                             </div>
+                        <div class="clear"></div>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <div class="widget">
+                    <div class="title"><img src="static/images/icons/dark/transfer.png" alt="" class="titleIcon" /><h6>模型选择</h6></div>
+                    <div class="body">
+                    <div class="leftPart">
+                        <div class="filter"><span>查找: </span><input type="text" id="box1Filter" class="boxFilter" /><input type="button" id="box1Clear" class="fBtn" value="x" /><div class="clear"></div></div>
+                        
+                        <select id="box1View" multiple="multiple" class="multiple" style="height:320px;">
+                            <option value="100" disabled="" class="model_label">分类</option>
+                            <option value="101" class="model_name">朴素贝叶斯</option>
+                            <option value="102" class="model_name">决策树</option>
+                            <option value="103" class="model_name">支持向量机</option>
+                            <option value="104" class="model_name">神经网络</option>
+                            <option value="200" disabled="" class="model_label">回归</option>
+                            <option value="201" class="model_name">线性回归</option>
+                            <option value="202" class="model_name">逻辑回归</option>
+                            <option value="203" class="model_name">决策树</option>
+                            <option value="204" class="model_name">支持向量机</option>
+                            <option value="205" class="model_name">神经网络</option>
+                            <option value="300" disabled="" class="model_label">聚类</option>
+                            <option value="301" class="model_name">K均值聚类(K-means)</option>
+                            <option value="400" disabled="" class="model_label">评估方法</option>
+                            <option value="401" class="model_name">ROC曲线</option>
+                            <option value="402" class="model_name">混淆矩阵</option>
+                        </select>
+                        <br/>
+                        <span id="box1Counter" class="countLabel"></span>
+                        
+                        <div class="dn"><select id="box1Storage" name="box1Storage"></select></div>
+                    </div>
+                        
+                    <div class="dualControl">
+                        <button id="to2" type="button" class="basic mr5 mb15">&nbsp;&gt;&nbsp;</button>
+                        <button id="allTo2" type="button" class="basic">&nbsp;&gt;&gt;&nbsp;</button><br />
+                        <button id="to1" type="button" class="basic mr5">&nbsp;&lt;&nbsp;</button>
+                        <button id="allTo1" type="button" class="basic">&nbsp;&lt;&lt;&nbsp;</button>
+                    </div>
+                        
+                    <div class="rightPart">
+                        <div class="filter"><span>查找: </span><input type="text" id="box2Filter" class="boxFilter" /><input type="button" id="box2Clear" class="fBtn" value="x" /><div class="clear"></div></div>
+                        <select id="box2View" multiple="multiple" class="multiple" style="height:300px;"></select><br/>
+                        <span id="box2Counter" class="countLabel"></span>
+                           <div class="dn"><select id="box2Storage"></select></div>
+                    </div>
+                    <div class="clear"></div>
+                    </div>
+                </div>
+            </fieldset>
+            <div class="formSubmit"><input id="btn" type="button" value="开始训练" class="redB"></div>
+        </form>
+            
+    </div>
+    
+    <!-- Footer line -->
+    <div id="footer">
+        <div class="wrapper">Copyrights 2021 Jiangnan University. All rights reserved.</div>
+    </div>
+
+</div>
+
+<div class="clear"></div>
+
+</body>
+</html>
+
+<script type="text/javascript">
+        //checkfile = $("input[type=checkbox][class='checkfile']");
+        //var childs = $("#childs");
+        //console.log(checkfile);
+    $(function(){
+        $('#btn').click(function(){
+            var models = new Array;
+            $("#box2View option").each(function () {
+                var val = $(this).val(); //获取单个value
+                //console.log(val);
+                models.push(val);
+            });
+            //console.log(models);
+            $.ajax({
+            url: '/runmodel',
+            data: {"models": models},
+            type: 'POST',
+            traditional: true,
+            success: function(data){
+                alert(data);
+            }
+            });
+            window.location.href="trained_result.html";
+        });
+    });
+
+</script>

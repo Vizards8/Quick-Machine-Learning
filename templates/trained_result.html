@@ -1,0 +1,316 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
+    <title>QuickML|训练结果</title>
+    <link href="static/css/main.css" rel="stylesheet" type="text/css"/>
+
+    <script type="text/javascript" src="static/js/jquery.min.js"></script>
+
+    <script type="text/javascript" src="static/js/plugins/spinner/ui.spinner.js"></script>
+    <script type="text/javascript" src="static/js/plugins/spinner/jquery.mousewheel.js"></script>
+
+    <script type="text/javascript" src="static/js/jquery-ui.min.js"></script>
+
+    <script type="text/javascript" src="static/js/plugins/charts/excanvas.min.js"></script>
+    <script type="text/javascript" src="static/js/plugins/charts/jquery.sparkline.min.js"></script>
+
+    <script type="text/javascript" src="static/js/plugins/forms/uniform.js"></script>
+    <script type="text/javascript" src="static/js/plugins/forms/jquery.cleditor.js"></script>
+    <script type="text/javascript" src="static/js/plugins/forms/jquery.validationEngine-en.js"></script>
+    <script type="text/javascript" src="static/js/plugins/forms/jquery.validationEngine.js"></script>
+    <script type="text/javascript" src="static/js/plugins/forms/jquery.tagsinput.min.js"></script>
+    <script type="text/javascript" src="static/js/plugins/forms/autogrowtextarea.js"></script>
+    <script type="text/javascript" src="static/js/plugins/forms/jquery.maskedinput.min.js"></script>
+    <script type="text/javascript" src="static/js/plugins/forms/jquery.dualListBox.js"></script>
+    <script type="text/javascript" src="static/js/plugins/forms/jquery.inputlimiter.min.js"></script>
+    <script type="text/javascript" src="static/js/plugins/forms/chosen.jquery.min.js"></script>
+
+    <script type="text/javascript" src="static/js/plugins/wizard/jquery.form.js"></script>
+    <script type="text/javascript" src="static/js/plugins/wizard/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="static/js/plugins/wizard/jquery.form.wizard.js"></script>
+
+    <script type="text/javascript" src="static/js/plugins/uploader/plupload.js"></script>
+    <script type="text/javascript" src="static/js/plugins/uploader/plupload.html5.js"></script>
+    <script type="text/javascript" src="static/js/plugins/uploader/plupload.html4.js"></script>
+    <script type="text/javascript" src="static/js/plugins/uploader/jquery.plupload.queue.js"></script>
+
+    <script type="text/javascript" src="static/js/plugins/tables/datatable.js"></script>
+    <script type="text/javascript" src="static/js/plugins/tables/tablesort.min.js"></script>
+    <script type="text/javascript" src="static/js/plugins/tables/resizable.min.js"></script>
+
+    <script type="text/javascript" src="static/js/plugins/ui/jquery.tipsy.js"></script>
+    <script type="text/javascript" src="static/js/plugins/ui/jquery.collapsible.min.js"></script>
+    <script type="text/javascript" src="static/js/plugins/ui/jquery.prettyPhoto.js"></script>
+    <script type="text/javascript" src="static/js/plugins/ui/jquery.progress.js"></script>
+    <script type="text/javascript" src="static/js/plugins/ui/jquery.timeentry.min.js"></script>
+    <script type="text/javascript" src="static/js/plugins/ui/jquery.colorpicker.js"></script>
+    <script type="text/javascript" src="static/js/plugins/ui/jquery.jgrowl.js"></script>
+    <script type="text/javascript" src="static/js/plugins/ui/jquery.breadcrumbs.js"></script>
+    <script type="text/javascript" src="static/js/plugins/ui/jquery.sourcerer.js"></script>
+
+    <script type="text/javascript" src="static/js/plugins/calendar.min.js"></script>
+    <script type="text/javascript" src="static/js/plugins/elfinder.min.js"></script>
+
+    <script type="text/javascript" src="static/js/custom.js"></script>
+
+
+
+
+    <!-- Shared on MafiaShare.net  --><!-- Shared on MafiaShare.net  --></head>
+
+<body>
+
+<!-- Left side content -->
+<div id="leftSide">
+    <div class="logo"><a href="index.html"><img src="static/images/logo.png" alt=""/></a></div>
+
+    <div class="sidebarSep mt0"></div>
+
+    <!-- Search widget -->
+    <form action="" class="sidebarSearch">
+        <input type="text" name="search" placeholder="搜索" id="ac"/>
+        <input type="submit" value=""/>
+    </form>
+
+    <div class="sidebarSep"></div>
+
+    <!-- General balance widget -->
+    <div class="genBalance">
+        <a href="#" title="" class="amount">
+            <span>欢迎:</span>
+            <span class="balanceAmount">USER ID</span>
+        </a>
+        <a href="#" title="" class="amChanges">
+            <div><img src="./static/images/sunny.png"></div>
+        </a>
+    </div>
+
+    <div class="sidebarSep"></div>
+
+    <!-- Left navigation -->
+    <ul id="menu" class="nav">
+        <li class="dash"><a href="index.html" title=""><span>个人中心</span></a></li>
+        <!--<li class="charts"><a href="charts.html" title=""><span>Statistics and charts</span></a></li>-->
+        <li class="forms"><a href="#" title=""><span>新建项目</span><strong>3</strong></a>
+            <ul class="sub">
+                <li><a href="upload_data.html" title="">上传数据</a></li>
+                <li><a href="model_select.html" title="">选择模型</a></li>
+                <li><a href="trained_result.html" title="">训练结果</a></li>
+            </ul>
+        </li>
+    </ul>
+</div>
+
+
+<!-- Right side -->
+<div id="rightSide">
+
+    <!-- Top fixed navigation -->
+    <div class="topNav">
+        <div class="wrapper">
+            <div class="welcome"></div>
+            <div class="userNav">
+                <ul>
+                    <li><a href="#" title=""><img src="static/images/icons/topnav/profile.png"
+                                                  alt=""/><span>账户</span></a></li>
+                    <li><a href="#" title=""><img src="static/images/icons/topnav/tasks.png" alt=""/><span>项目</span></a>
+                    </li>
+                    <li><a href="#" title=""><img src="static/images/icons/topnav/settings.png" alt=""/><span>设置</span></a>
+                    </li>
+                    <li><a href="#" title=""><img src="static/images/icons/topnav/logout.png"
+                                                  alt=""/><span>退出</span></a></li>
+                </ul>
+            </div>
+            <div class="clear"></div>
+        </div>
+    </div>
+
+    <!-- Responsive header -->
+    <div class="resp">
+        <div class="respHead">
+            <a href="index.html" title=""><img src="static/images/loginLogo.png" alt=""/></a>
+        </div>
+
+        <div class="cLine"></div>
+        <div class="smalldd">
+            <span class="goTo"><img src="static/images/icons/light/alert.png" alt=""/> 请调整窗口大小 </span>
+            <ul class="smallDropdown">
+                <li><a href="index.html" title=""><img src="static/images/icons/light/home.png" alt=""/>首页</a></li>
+                <li><a href="upload_data.html" title=""><img src="static/images/icons/light/stats.png" alt=""/>新建模型</a>
+                </li>
+            </ul>
+        </div>
+        <div class="cLine"></div>
+    </div>
+
+    <!-- Title area -->
+    <div class="titleArea">
+        <div class="wrapper">
+            <div class="pageTitle">
+                <h1>训练结果</h1>
+                <span>这里展示训练结果</span>
+            </div>
+            <div class="middleNav">
+            </div>
+            <div class="clear"></div>
+        </div>
+    </div>
+
+    <div class="line"></div>
+
+    <!-- Main content wrapper -->
+    <div class="wrapper">
+
+        <!-- Note -->
+        <div class="nNote nInformation">
+            <p><strong>提示: </strong>xxxxxxxxxxxxxx</p>
+        </div>
+
+        <!-- Progress bars -->
+        <div id="progressList" class="widget">
+            <div class="title"><img src="static/images/icons/dark/loading.png" alt="" class="titleIcon"/><h6>训练进度</h6>
+            </div>
+            <!--
+            <div class="formRow">
+                <label>SVM:</label>
+                <div class="formRight">
+                    <div class="progress"></div>
+                </div>
+                <div class="clear"></div>
+            </div>
+
+            <div class="formRow">
+                <label>RF:</label>
+                <div class="formRight">
+                    <div id="progress1"><span class="pbar"></span><span class="percent"></span><span
+                            class="elapsed"></span></div>
+                </div>
+                <div class="clear"></div>
+            </div>
+
+            <div class="formRow">
+                <label>XGB:</label>
+                <div class="formRight">
+                    <div id="progress2"><span class="pbar"></span><span class="percent"></span><span
+                            class="elapsed"></span></div>
+                </div>
+                <div class="clear"></div>
+            </div>-->
+        </div>
+
+        <!-- Dynamic table -->
+        <div class="widget">
+            <div class="title"><img src="static/images/icons/dark/full2.png" alt="" class="titleIcon"/><h6>训练结果</h6>
+            </div>
+            <table cellpadding="0" cellspacing="0" border="0" class="display dTable">
+                <thead>
+                <tr>
+                    <th>模型</th>
+                    <th>用时</th>
+                    <th>精度</th>
+                    <th>模型文件</th>
+                </tr>
+                </thead>
+                <tbody id="result">
+               	<!--
+                <tr class="gradeA">
+                    <td class="center">SVM</td>
+                    <td class="center">3h 6m 12s</td>
+                    <td class="center">88.0%</td>
+                    <td class="center"><a herf="#">项目名称-SVM.h</a></td>
+                </tr>
+                <tr class="gradeA">
+                    <td class="center">RF</td>
+                    <td class="center">3h 2m 33s</td>
+                    <td class="center">90.7%</td>
+                    <td class="center"><a herf="#">项目名称-RF.h</a></td>
+                </tr>
+                <tr class="gradeA">
+                    <td class="center">XGB</td>
+                    <td class="center">3h 12m 1s</td>
+                    <td class="center">89.7%</td>
+                    <td class="center"><a herf="#">项目名称-XGB.h</a></td>
+                </tr>
+            	-->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Footer line -->
+    <div id="footer">
+        <div class="wrapper">Copyrights 2021 Jiangnan University. All rights reserved.</div>
+    </div>
+
+</div>
+
+<div class="clear"></div>
+
+</body>
+</html>
+
+<script type="text/javascript">
+	$.ajax({
+	type: "GET",
+	url: "/getSelectedModels",
+	async: false,
+	dataType: "json",
+	success: function(data){
+	 	var modelList = data.Models;
+	 	console.log(modelList)
+	 	for(i in modelList){
+	 		$("#progressList").append(
+	 			"<div class='formRow'><label>"+modelList[i]+": </label>"
+	            +"<div class='formRight'>"
+	            +"<div class='progress'>"
+	            +"<span class='pbar'></span>"
+	            +"<span class='percent'></span>"
+	            +"<span class='elapsed'></span></div>"
+	            +"<div class='clear'></div></div>"
+	    	);
+	 	};
+	 }
+	});
+</script>
+
+
+<script type="text/javascript">
+
+	var count = 0;
+	var myTimer = setInterval("getResult()", 1000);
+	function getResult() {
+		console.log("getResult...");
+		$.ajax({
+			type:"GET",
+			url:"/getTrainedResult",
+			dataType: "json",
+        	success: function(data){
+         		console.log("ajax send...");
+         		var len = data.TrainedResult.length;
+         		while(len > count){
+         			var values = data.TrainedResult.pop();
+         			$("#result").append(
+         				"<tr class='gradeA'><td class='center'>"+values[0]+"</td>"
+         				+"<td class='center'>"+values[1]+"</td>"
+         				+"<td class='center'>"+values[2]+"</td>"
+         				+"<td class='center'><a href="+values[3]+">"+"项目名—"+values[0]+"</a></td></tr>"
+	                );
+       				count = count + 1;
+      			};
+        		if(data.Finished == true){
+		            console.log("stop");
+		            StopFunction();
+		            //window.clearTimeout(t);
+		        }
+		    }
+		});
+    }
+
+    function StopFunction() {
+    	clearInterval(myTimer);
+    }
+</script>
+

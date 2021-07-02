@@ -16,6 +16,7 @@ app = Flask(__name__, template_folder='templates', static_folder='static')
 
 # 设置连接的数据库uri
 app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://quickml:quickml@localhost:3306/quick_ml"
+# mysql+pymysql://{username}:{password}@{host}:{port}/{db}
 # 设置每次请求结束后，会自动提交数据库的改动
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
